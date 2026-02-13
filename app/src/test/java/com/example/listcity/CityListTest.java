@@ -26,6 +26,19 @@ class CityListTest {
         return new City("Edmonton", "Alberta");
     }
 
+    @Test
+    void testHasCity() {
+
+        CityList cityList = mockCityList();
+
+        // Edmonton already exists in mock list
+        assertTrue(cityList.hasCity(mockCity()));
+
+        // This city was not added
+        City city = new City("Calgary", "Alberta");
+        assertFalse(cityList.hasCity(city));
+    }
+
     /**
      * Test that adding a city increases list size
      * and that the city exists in the list.
@@ -65,6 +78,41 @@ class CityListTest {
     }
 
     /**
+     * Test deleting a city from the list.
+     * The city should be removed and the list size should decrease.
+     */
+    @Test
+    void testDelete() {
+        // Create a CityList with one existing city
+        CityList cityList = mockCityList();
+        assertEquals(1, cityList.getCities().size());
+
+        // Delete the existing city
+        cityList.delete(mockCity());
+
+        // Now list should be empty and should not contain the city
+        assertEquals(0, cityList.getCities().size());
+        assertFalse(cityList.getCities().contains(mockCity()));
+    }
+
+    /**
+     * Test that deleting a non-existing city throws an exception.
+     */
+    @Test
+    void testDeleteException() {
+        // Create a CityList with one city
+        CityList cityList = mockCityList();
+
+        // Create a city that is NOT in the list
+        City city = new City("Calgary", "Alberta");
+
+        // Expect IllegalArgumentException when deleting a non-existing city
+        assertThrows(IllegalArgumentException.class, () -> {
+            cityList.delete(city);
+        });
+    }
+
+    /**
      * Test the behavior of getCities().
      * The list should remain sorted alphabetically by city name.
      */
@@ -96,5 +144,25 @@ class CityListTest {
                 0,
                 mockCity().compareTo(cityList.getCities().get(1))
         );
+    }
+
+    /**
+     * Test that countCities() correctly returns
+     * the number of cities in the list.
+     */
+    @Test
+    void testCountCities() {
+
+        // mockCityList() already contains one city
+        CityList cityList = mockCityList();
+
+        // should start with one city
+        assertEquals(1, cityList.countCities());
+
+        // add another city
+        cityList.add(new City("Calgary", "Alberta"));
+
+        // now should be two cities
+        assertEquals(2, cityList.countCities());
     }
 }
